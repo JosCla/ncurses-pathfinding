@@ -4,9 +4,8 @@
 // Implements Dijkstra's pathfinding algorithm
 
 // C++ Standard Library
-#include <string>
 #include <vector>
-#include <list>
+#include <set>
 #include <utility>
 
 class Dijkstra {
@@ -18,6 +17,8 @@ public:
 	// Pathfinds throughout the entire map, finding the optimal cost
 	// of reaching every point
 	void pathfind();
+	// Resets pathfinding data
+	void resetPath();
 
 	// Sets the map
 	void setMap(const std::vector<std::vector<double>> &map);
@@ -29,6 +30,9 @@ public:
 	void setEnd(unsigned int endX, unsigned int endY);
 	void setStopAtEnd(bool stop);
 
+	// Returns a const reference to the _costs vector
+	const std::vector<std::vector<double>>& getCosts();
+
 private:
 	// The cost map to be traversed
 	std::vector<std::vector<double>> _map;
@@ -36,7 +40,7 @@ private:
 	unsigned int _height;
 
 	// The cost of moving to each point from the starting points
-	// (starts as 0.0 for all points)
+	// (starts as Infinity for all points)
 	std::vector<std::vector<double>> _costs;
 
 	// The direction to move from a certain point in order to optimally
@@ -53,8 +57,8 @@ private:
 	bool _stopAtEnd;
 
 	// The queue of points to be checked by the pathfinding algorithm
-	// TODO: this wouldn't work, actually
-	std::list<std::pair<unsigned int, unsigned int>> _queue;
+	std::set<std::pair<double, std::pair<unsigned int, unsigned int>>> _queue;
+	std::set<std::pair<unsigned int, unsigned int>> _visited;
 };
 
 #endif // DIJKSTRA_H

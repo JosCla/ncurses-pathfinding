@@ -17,8 +17,11 @@ using std::string;
 
 // Our Files
 #include "perlin.h"
+#include "dijkstra.h"
 
 void dispMaze(WINDOW *window, const vector<vector<double>> &maze);
+void dispMaze2(WINDOW *window, const vector<vector<double>> &maze,
+		const vector<vector<double>> &costs);
 char toGreyscale(double num, double min, double max);
 
 int main() {
@@ -30,6 +33,11 @@ int main() {
 	curs_set(0); // Hiding the cursor
 	refresh(); // (refreshing to make sure child windows are drawn)
 	srand(time(nullptr)); // initializing randomization
+
+	// Getting colors ready
+	start_color();
+	init_pair(1, COLOR_RED, COLOR_BLACK);
+	init_pair(2, COLOR_BLUE, COLOR_BLACK);
 
 	// Getting screen dimensions
 	int maxY, maxX;
@@ -54,8 +62,14 @@ int main() {
 		}
 	}
 
+	// Making our Dijkstra Pathfinding object
+	Dijkstra pathfinder(maze);
+	pathfinder.pathfind();
+	auto costs = pathfinder.getCosts();
+
 	// Drawing our maze
-	dispMaze(mazeWin, maze);
+	//dispMaze(mazeWin, maze);
+	dispMaze2(mazeWin, maze, costs);
 	wrefresh(mazeWin);
 
 	getch(); // (waiting for user input before exiting)
@@ -100,9 +114,40 @@ void dispMaze(WINDOW *window, const vector<vector<double>> &maze) {
 	}
 }
 
+void dispMaze2(WINDOW *window, const vector<vector<double>> &maze,
+		const vector<vector<double>> &costs) {
+	// Finding maze dimensions
+	int mazeH = maze.size();
+	int mazeW = maze.at(0).size();
+
+	// Finding minimum and maximum heights
+	double min = maze.at(0).at(0);
+	double max = min;
+	for (int row = 0; row < mazeH; ++row) {
+		for (int col = 0; col < mazeW; ++col) {
+			double curr = maze.at(row).at(col);
+			if (curr < min) {
+				min = curr;
+			}
+			if (curr > max) {
+				max = curr;
+			}
+		}
+	}
+
+	// Displaying the maze's pixels in greyscale
+	for (int y = 0; y < mazeH; ++y) {
+		for (int x = 0; x < mazeW; ++x) {
+			mvwaddch(window, y, x, toGreyscale(maze.at(y).at(x), min, max));
+			int color = (int)floor(costs.at(y).at(x) * 5.0) % 2 + 1;
+			mvwchgat(window, y, x, 1, A_BOLD, color, NULL);
+		}
+	}
+}
+
 // Converts a float value in a range to greyscale
 char toGreyscale(double num, double min, double max) {
-	string greyscale = " -.,~:;+<=%$&@#";
+	string greyscale = " -.,~:;+<=%$&#@";
 
 	if (num < min) {num = min;}
 	if (num > max) {num = max;}
