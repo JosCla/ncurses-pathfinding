@@ -10,7 +10,7 @@ TARGET = maze
 all: $(TARGET)
 
 $(TARGET): $(OBJFILES)
-	$(CXX) $(CXXFLAGS) $(LIBS) $^ -o $@
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LIBS)
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $^ -o $@
