@@ -12,6 +12,7 @@ using std::fabs;
 
 // Our Files
 #include "dijkstra.h"
+#include "direction.h"
 
 Dijkstra::Dijkstra(const vector<vector<double>> &map) {
 	// Setting up a few default values
@@ -61,8 +62,9 @@ void Dijkstra::pathfind() {
 			// modify the cost in _costs and add the point to the queue
 			if (currCost < _costs.at(currCoords.second).at(currCoords.first)) {
 				_costs.at(currCoords.second).at(currCoords.first) = currCost;
+				_dirs.at(currCoords.second).at(currCoords.first) =
+					reverseDir(dirToInt(dir));
 				_queue.insert({currCost, currCoords});
-				// TODO: optimal direction
 			}
 		}
 
@@ -77,7 +79,7 @@ void Dijkstra::resetPath() {
 	// Resetting optimal costs and directions
 	_costs = vector<vector<double>>(_height, 
 			vector<double>(_width, std::numeric_limits<double>::infinity()));
-	_dirs = vector<vector<char>>(_height, vector<char>(_width, ' '));
+	_dirs = vector<vector<int>>(_height, vector<int>(_width, 0));
 
 	// Putting the relevant starting node into an emptied queue
 	_queue.clear();
@@ -130,4 +132,8 @@ void Dijkstra::setStopAtEnd(bool stop) {
 
 const vector<vector<double>>& Dijkstra::getCosts() {
 	return _costs;
+}
+
+const vector<vector<int>>& Dijkstra::getDirs() {
+	return _dirs;
 }

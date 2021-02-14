@@ -22,16 +22,16 @@ public:
 
 	// Sets the map
 	void setMap(const std::vector<std::vector<double>> &map);
-
 	// Sets the starting coordinates
 	void setStart(unsigned int startX, unsigned int startY);
-
 	// Sets the ending coordinates
 	void setEnd(unsigned int endX, unsigned int endY);
 	void setStopAtEnd(bool stop);
 
 	// Returns a const reference to the _costs vector
 	const std::vector<std::vector<double>>& getCosts();
+	// Returns a const reference to the _dirs vector
+	const std::vector<std::vector<int>>& getDirs();
 
 private:
 	// The cost map to be traversed
@@ -44,8 +44,9 @@ private:
 	std::vector<std::vector<double>> _costs;
 
 	// The direction to move from a certain point in order to optimally
-	// move back to (_startX, _startY). (starts as ' ' for all points)
-	std::vector<std::vector<char>> _dirs;
+	// move back to (_startX, _startY). (starts as -1 for all points)
+	// 0-7 represent rotations [0,7pi/8]
+	std::vector<std::vector<int>> _dirs;
 
 	// The starting point of cost 0
 	unsigned int _startX;
