@@ -11,6 +11,8 @@ using std::time;
 using std::floor; using std::round;
 #include <string> // for strings
 using std::string;
+#include <utility>
+using std::pair;
 
 // Libraries
 #include <ncurses.h> // ncurses library
@@ -18,12 +20,16 @@ using std::string;
 // Our Files
 #include "perlin.h"
 #include "dijkstra.h"
+#include "direction.h"
+#include "gui.h"
 
 void dispMaze(WINDOW *window, const vector<vector<double>> &maze);
 void dispMaze2(WINDOW *window, const vector<vector<double>> &maze,
 		const vector<vector<double>> &costs);
 void dispMaze3(WINDOW *window, const vector<vector<double>> &maze,
 		const vector<vector<double>> &costs, const vector<vector<int>> &dirs);
+void drawOptPath(WINDOW *window, const vector<vector<int>> dirs,
+		const int x, const int y);
 char toGreyscale(double num, double min, double max);
 
 int main() {
@@ -46,19 +52,21 @@ int main() {
 	// Getting screen dimensions
 	int maxY, maxX;
 	getmaxyx(stdscr, maxY, maxX);
-
-	// Printing directions
-	mvprintw(0, 0, "Arrow keys to move, q to quit.");
-	mvchgat(0, 0, -1, A_REVERSE, 0, NULL);
+	
+	// Getting GUI ready
+	GUI ourGUI;
+	ourGUI.initWindows();
+	ourGUI.setMenuOpen(true);
+	ourGUI.boxAll();
 
 	// Making our maze window
-	WINDOW *mazeWin = newwin(maxY - 1, maxX, 1, 0);
+	//WINDOW *mazeWin = newwin(maxY - 1, maxX, 1, 0);
 
 	// Making our Perlin Noise object
 	Perlin2D perlin(rand());
 
 	// Making our maze
-	vector<vector<double>> maze(50, vector<double>(100, 0));
+	vector<vector<double>> maze(50, vector<double>(160, 0));
 	for (unsigned int row = 0; row < maze.size(); ++row) {
 		for (unsigned int col = 0; col < maze.at(0).size(); ++col) {
 			double noise = perlin.noise(row / 10.0, col / 10.0);
@@ -73,10 +81,12 @@ int main() {
 	auto dirs = pathfinder.getDirs();
 
 	// Drawing our maze
-	//dispMaze(mazeWin, maze);
+	dispMaze(ourGUI.getMap(), maze);
 	//dispMaze2(mazeWin, maze, costs);
-	dispMaze3(mazeWin, maze, costs, dirs);
-	wrefresh(mazeWin);
+	//dispMaze3(mazeWin, maze, costs, dirs);
+	drawOptPath(ourGUI.getMap(), dirs, 100, 30);
+	wrefresh(ourGUI.getMap());
+
 
 	getch(); // (waiting for user input before exiting)
 
@@ -111,11 +121,14 @@ void dispMaze(WINDOW *window, const vector<vector<double>> &maze) {
 	}
 
 	// Displaying the closest pixel in maze at each character on the screen
-	for (int y = 0; y < maxY; ++y) {
-		for (int x = 0; x < maxX; ++x) {
+	for (int y = 0; y < mazeH; ++y) {
+		for (int x = 0; x < mazeW; ++x) {
+			/*
 			int mazeY = floor(((double)y / maxY) * mazeH);
 			int mazeX = floor(((double)x / maxX) * mazeW);
 			mvwaddch(window, y, x, toGreyscale(maze.at(mazeY).at(mazeX), min, max));
+			*/
+			mvwaddch(window, y, x, toGreyscale(maze.at(y).at(x), min, max));
 		}
 	}
 }
@@ -179,6 +192,17 @@ void dispMaze3(WINDOW *window, const vector<vector<double>> &maze,
 			int color = dirs.at(y).at(x) / 2 + 1;
 			mvwchgat(window, y, x, 1, A_BOLD, color, NULL);
 		}
+	}
+}
+
+// Draws the optimal path from a point to the start
+void drawOptPath(WINDOW *window, const vector<vector<int>> dirs,
+		const int x, const int y) {
+	mvwchgat(window, y, x, 1, A_REVERSE, 3, NULL);
+
+	if (x != 0 || y != 0) {
+		pair<int, int> dir = intToDir(dirs.at(y).at(x));
+		drawOptPath(window, dirs, x + dir.first, y + dir.second);
 	}
 }
 
