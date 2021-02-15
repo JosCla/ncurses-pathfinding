@@ -9,6 +9,9 @@
 // Libraries
 #include <ncurses.h>
 
+// Draws the title window
+void drawTitle(WINDOW *window);
+
 // Gives a basic greyscale drawing of the map
 void drawMap(WINDOW *window, const std::vector<std::vector<double>> &map);
 

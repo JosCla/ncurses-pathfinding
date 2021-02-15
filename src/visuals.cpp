@@ -18,8 +18,24 @@ using std::pair;
 #include "visuals.h"
 #include "direction.h"
 
+// Draws the title window
+void drawTitle(WINDOW *window) {
+	// Clearing the window
+	wclear(window);
+
+	// Printing the title section
+	mvwprintw(window, 0, 0, "ncurses-pathfinding | (c)ontrols (o)ptions");
+	mvwchgat(window, 0, 0, -1, A_REVERSE, 0, NULL);
+
+	// Refreshing the window
+	wrefresh(window);
+}
+
 // Gives a basic greyscale drawing of the map
 void drawMap(WINDOW *window, const vector<vector<double>> &map) {
+	// Clearing the window
+	wclear(window);
+
 	// Finding map dimensions
 	int mapH = map.size();
 	int mapW = map.at(0).size();
@@ -50,6 +66,9 @@ void drawMap(WINDOW *window, const vector<vector<double>> &map) {
 // Draws the map with strips representing different costs
 void drawMapCosts(WINDOW *window, const vector<vector<double>> &map,
 		const vector<vector<double>> &costs) {
+	// Clearing the window
+	wclear(window);
+
 	// Drawing the map normally
 	drawMap(window, map);
 
@@ -70,6 +89,9 @@ void drawMapCosts(WINDOW *window, const vector<vector<double>> &map,
 // to go in to get to the origin point from each tile
 void drawMapDirs(WINDOW *window, const vector<vector<double>> &map,
 		const vector<vector<int>> &dirs) {
+	// Clearing the window
+	wclear(window);
+
 	// Drawing the map normally
 	drawMap(window, map);
 

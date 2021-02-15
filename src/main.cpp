@@ -40,6 +40,9 @@ int main() {
 	ourGUI.setMenuOpen(true);
 	ourGUI.boxAll();
 
+	// Drawing the title
+	drawTitle(ourGUI.getTitle());
+
 	// Making our Perlin Noise object
 	Perlin2D perlin(rand());
 
