@@ -1,18 +1,12 @@
 // C++ Standard Library
-#include <vector> // for vector
-using std::vector;
-#include <iostream> // for cout
+#include <iostream>
 using std::cout; using std::endl;
-#include <cstdlib> // for random numbers
+#include <vector>
+using std::vector;
+#include <cstdlib>
 using std::rand; using std::srand;
-#include <ctime> // for timing
+#include <ctime>
 using std::time;
-#include <cmath> // for math
-using std::floor; using std::round;
-#include <string> // for strings
-using std::string;
-#include <utility>
-using std::pair;
 
 // Libraries
 #include <ncurses.h> // ncurses library
@@ -20,17 +14,8 @@ using std::pair;
 // Our Files
 #include "perlin.h"
 #include "dijkstra.h"
-#include "direction.h"
 #include "gui.h"
-
-void dispMaze(WINDOW *window, const vector<vector<double>> &maze);
-void dispMaze2(WINDOW *window, const vector<vector<double>> &maze,
-		const vector<vector<double>> &costs);
-void dispMaze3(WINDOW *window, const vector<vector<double>> &maze,
-		const vector<vector<double>> &costs, const vector<vector<int>> &dirs);
-void drawOptPath(WINDOW *window, const vector<vector<int>> dirs,
-		const int x, const int y);
-char toGreyscale(double num, double min, double max);
+#include "visuals.h"
 
 int main() {
 	// Initialization
@@ -49,171 +34,40 @@ int main() {
 	init_pair(3, COLOR_GREEN, COLOR_BLACK);
 	init_pair(4, COLOR_YELLOW, COLOR_BLACK);
 
-	// Getting screen dimensions
-	int maxY, maxX;
-	getmaxyx(stdscr, maxY, maxX);
-	
 	// Getting GUI ready
 	GUI ourGUI;
 	ourGUI.initWindows();
 	ourGUI.setMenuOpen(true);
 	ourGUI.boxAll();
 
-	// Making our maze window
-	//WINDOW *mazeWin = newwin(maxY - 1, maxX, 1, 0);
-
 	// Making our Perlin Noise object
 	Perlin2D perlin(rand());
 
-	// Making our maze
-	vector<vector<double>> maze(50, vector<double>(160, 0));
-	for (unsigned int row = 0; row < maze.size(); ++row) {
-		for (unsigned int col = 0; col < maze.at(0).size(); ++col) {
+	// Making our map
+	vector<vector<double>> map(50, vector<double>(160, 0));
+	for (unsigned int row = 0; row < map.size(); ++row) {
+		for (unsigned int col = 0; col < map.at(0).size(); ++col) {
 			double noise = perlin.noise(row / 10.0, col / 10.0);
-			maze.at(row).at(col) = noise;
+			map.at(row).at(col) = noise;
 		}
 	}
 
 	// Making our Dijkstra Pathfinding object
-	Dijkstra pathfinder(maze);
+	Dijkstra pathfinder(map);
 	pathfinder.pathfind();
 	auto costs = pathfinder.getCosts();
 	auto dirs = pathfinder.getDirs();
 
-	// Drawing our maze
-	dispMaze(ourGUI.getMap(), maze);
-	//dispMaze2(mazeWin, maze, costs);
-	//dispMaze3(mazeWin, maze, costs, dirs);
+	// Drawing our map
+	drawMap(ourGUI.getMap(), map);
+	//drawMapCosts(ourGUI.getMap(), map, costs);
+	//drawMapDirs(ourGUI.getMap(), map, dirs);
 	drawOptPath(ourGUI.getMap(), dirs, 100, 30);
 	wrefresh(ourGUI.getMap());
-
 
 	getch(); // (waiting for user input before exiting)
 
 	endwin(); // Exit ncurses mode
 
 	return 0;
-}
-
-// Displays a given heightmap in a window
-void dispMaze(WINDOW *window, const vector<vector<double>> &maze) {
-	// Finding maximum screen dimensions
-	int maxY, maxX;
-	getmaxyx(window, maxY, maxX);
-
-	// Finding maze dimensions
-	int mazeH = maze.size();
-	int mazeW = maze.at(0).size();
-
-	// Finding minimum and maximum heights
-	double min = maze.at(0).at(0);
-	double max = min;
-	for (int row = 0; row < mazeH; ++row) {
-		for (int col = 0; col < mazeW; ++col) {
-			double curr = maze.at(row).at(col);
-			if (curr < min) {
-				min = curr;
-			}
-			if (curr > max) {
-				max = curr;
-			}
-		}
-	}
-
-	// Displaying the closest pixel in maze at each character on the screen
-	for (int y = 0; y < mazeH; ++y) {
-		for (int x = 0; x < mazeW; ++x) {
-			/*
-			int mazeY = floor(((double)y / maxY) * mazeH);
-			int mazeX = floor(((double)x / maxX) * mazeW);
-			mvwaddch(window, y, x, toGreyscale(maze.at(mazeY).at(mazeX), min, max));
-			*/
-			mvwaddch(window, y, x, toGreyscale(maze.at(y).at(x), min, max));
-		}
-	}
-}
-
-void dispMaze2(WINDOW *window, const vector<vector<double>> &maze,
-		const vector<vector<double>> &costs) {
-	// Finding maze dimensions
-	int mazeH = maze.size();
-	int mazeW = maze.at(0).size();
-
-	// Finding minimum and maximum heights
-	double min = maze.at(0).at(0);
-	double max = min;
-	for (int row = 0; row < mazeH; ++row) {
-		for (int col = 0; col < mazeW; ++col) {
-			double curr = maze.at(row).at(col);
-			if (curr < min) {
-				min = curr;
-			}
-			if (curr > max) {
-				max = curr;
-			}
-		}
-	}
-
-	// Displaying the maze's pixels in greyscale
-	for (int y = 0; y < mazeH; ++y) {
-		for (int x = 0; x < mazeW; ++x) {
-			mvwaddch(window, y, x, toGreyscale(maze.at(y).at(x), min, max));
-			int color = (int)floor(costs.at(y).at(x) * 5.0) % 2 + 1;
-			mvwchgat(window, y, x, 1, A_BOLD, color, NULL);
-		}
-	}
-}
-
-void dispMaze3(WINDOW *window, const vector<vector<double>> &maze,
-		const vector<vector<double>> &costs, const vector<vector<int>> &dirs) {
-	// Finding maze dimensions
-	int mazeH = maze.size();
-	int mazeW = maze.at(0).size();
-
-	// Finding minimum and maximum heights
-	double min = maze.at(0).at(0);
-	double max = min;
-	for (int row = 0; row < mazeH; ++row) {
-		for (int col = 0; col < mazeW; ++col) {
-			double curr = maze.at(row).at(col);
-			if (curr < min) {
-				min = curr;
-			}
-			if (curr > max) {
-				max = curr;
-			}
-		}
-	}
-
-	// Displaying the maze's pixels in greyscale
-	for (int y = 0; y < mazeH; ++y) {
-		for (int x = 0; x < mazeW; ++x) {
-			mvwaddch(window, y, x, toGreyscale(maze.at(y).at(x), min, max));
-			int color = dirs.at(y).at(x) / 2 + 1;
-			mvwchgat(window, y, x, 1, A_BOLD, color, NULL);
-		}
-	}
-}
-
-// Draws the optimal path from a point to the start
-void drawOptPath(WINDOW *window, const vector<vector<int>> dirs,
-		const int x, const int y) {
-	mvwchgat(window, y, x, 1, A_REVERSE, 3, NULL);
-
-	if (x != 0 || y != 0) {
-		pair<int, int> dir = intToDir(dirs.at(y).at(x));
-		drawOptPath(window, dirs, x + dir.first, y + dir.second);
-	}
-}
-
-// Converts a float value in a range to greyscale
-char toGreyscale(double num, double min, double max) {
-	string greyscale = " -.,~:;+<=%$&#@";
-
-	if (num < min) {num = min;}
-	if (num > max) {num = max;}
-	double level = (num - min) / (max - min);
-	unsigned int pos = round(level * (greyscale.size() - 1));
-
-	return greyscale.at(pos);
 }
