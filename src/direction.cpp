@@ -8,6 +8,7 @@ using std::pair;
 // Our Files
 #include "direction.h"
 
+// Converts a pair displacement to an integer rotation
 int dirToInt(const pair<int, int> &dir) {
 	int hash = (dir.first * 3) + dir.second;
 	
@@ -35,6 +36,7 @@ int dirToInt(const pair<int, int> &dir) {
 	}
 }
 
+// Converts back from an integer rotation to a pair displacement
 pair<int, int> intToDir(const int dir) {
 	// Made to handle ({-1, 0, 1}, {-1, 0, 1}) displacements
 	// Maps [0,7] -> [0,7pi/8]
@@ -60,6 +62,7 @@ pair<int, int> intToDir(const int dir) {
 	}
 }
 
+// Reverses a given integer rotation
 int reverseDir(const int dir) {
 	// Made to handle ({-1, 0, 1}, {-1, 0, 1}) displacements
 	return (dir + 4) % 8;

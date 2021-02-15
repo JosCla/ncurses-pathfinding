@@ -9,7 +9,7 @@ using std::rand; using std::srand;
 using std::time;
 
 // Libraries
-#include <ncurses.h> // ncurses library
+#include <ncurses.h>
 
 // Our Files
 #include "perlin.h"
