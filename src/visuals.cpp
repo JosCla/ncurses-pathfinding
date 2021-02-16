@@ -130,3 +130,15 @@ char toGreyscale(double num, double min, double max) {
 
 	return greyscale.at(pos);
 }
+
+// Draws the status window
+void drawStatus(WINDOW *window) {
+	// Clearing the window
+	wclear(window);
+
+	// Drawing the status
+	mvwchgat(window, 0, 0, -1, A_REVERSE, 0, NULL);
+	
+	// Refreshing the window
+	wrefresh(window);
+}

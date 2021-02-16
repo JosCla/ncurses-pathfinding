@@ -31,4 +31,7 @@ void drawOptPath(WINDOW *window, const std::vector<std::vector<int>> dirs,
 // Converts a number to greyscale given a minimum and maximum value
 char toGreyscale(double num, double min, double max);
 
+// Draws the status window
+void drawStatus(WINDOW *window);
+
 #endif // VISUALS_H
