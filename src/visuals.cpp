@@ -17,6 +17,7 @@ using std::pair;
 // Our Files
 #include "visuals.h"
 #include "direction.h"
+#include "color.h"
 
 // Draws the title window
 void drawTitle(WINDOW *window) {
@@ -79,7 +80,12 @@ void drawMapCosts(WINDOW *window, const vector<vector<double>> &map,
 	// Coloring each tile according to its cost
 	for (int y = 0; y < mapH; ++y) {
 		for (int x = 0; x < mapW; ++x) {
-			int color = (int)floor(costs.at(y).at(x) * 5.0) % 2 + 1;
+			int color;
+			if ((int)floor(costs.at(y).at(x) * 5.0) % 2 == 0) {
+				color = COL_RED;
+			} else {
+				color = COL_BLUE;
+			}
 			mvwchgat(window, y, x, 1, A_BOLD, color, NULL);
 		}
 	}
@@ -102,7 +108,23 @@ void drawMapDirs(WINDOW *window, const vector<vector<double>> &map,
 	// Coloring each tile according to its optimal direction
 	for (int y = 0; y < mapH; ++y) {
 		for (int x = 0; x < mapW; ++x) {
-			int color = dirs.at(y).at(x) / 2 + 1;
+			int color;
+			switch (dirs.at(y).at(x)) {
+				case 0:
+					color = COL_RED;
+					break;
+				case 2:
+					color = COL_BLUE;
+					break;
+				case 4:
+					color = COL_GREEN;
+					break;
+				case 6:
+					color = COL_YELLOW;
+					break;
+				default:
+					color = COL_RED;
+			}
 			mvwchgat(window, y, x, 1, A_BOLD, color, NULL);
 		}
 	}

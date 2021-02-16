@@ -16,6 +16,7 @@ using std::time;
 #include "dijkstra.h"
 #include "gui.h"
 #include "visuals.h"
+#include "color.h"
 
 int main() {
 	// Initialization
@@ -29,10 +30,7 @@ int main() {
 
 	// Getting colors ready
 	start_color();
-	init_pair(1, COLOR_RED, COLOR_BLACK);
-	init_pair(2, COLOR_BLUE, COLOR_BLACK);
-	init_pair(3, COLOR_GREEN, COLOR_BLACK);
-	init_pair(4, COLOR_YELLOW, COLOR_BLACK);
+	setupColors();
 
 	// Getting GUI ready
 	GUI ourGUI;
@@ -43,11 +41,14 @@ int main() {
 	// Drawing the title
 	drawTitle(ourGUI.getTitle());
 
+	// Drawing the status
+	drawStatus(ourGUI.getStatus());
+
 	// Making our Perlin Noise object
 	Perlin2D perlin(rand());
 
 	// Making our map
-	vector<vector<double>> map(50, vector<double>(160, 0));
+	vector<vector<double>> map(160, vector<double>(160, 0));
 	for (unsigned int row = 0; row < map.size(); ++row) {
 		for (unsigned int col = 0; col < map.at(0).size(); ++col) {
 			double noise = perlin.noise(row / 10.0, col / 10.0);
@@ -65,7 +66,7 @@ int main() {
 	drawMap(ourGUI.getMap(), map);
 	//drawMapCosts(ourGUI.getMap(), map, costs);
 	//drawMapDirs(ourGUI.getMap(), map, dirs);
-	drawOptPath(ourGUI.getMap(), dirs, 100, 30);
+	//drawOptPath(ourGUI.getMap(), dirs, 100, 30);
 	wrefresh(ourGUI.getMap());
 
 	getch(); // (waiting for user input before exiting)
