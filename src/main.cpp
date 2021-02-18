@@ -24,7 +24,7 @@ int main() {
 	cbreak(); // Take one character at a time
 	noecho(); // Disable echoing
 	keypad(stdscr, true); // Enable special inputs
-	curs_set(0); // Hiding the cursor
+	//curs_set(0); // Hiding the cursor
 	refresh(); // (refreshing to make sure child windows are drawn)
 	srand(time(nullptr)); // initializing randomization
 
@@ -69,7 +69,69 @@ int main() {
 	//drawOptPath(ourGUI.getMap(), dirs, 100, 30);
 	wrefresh(ourGUI.getMap());
 
-	getch(); // (waiting for user input before exiting)
+	// Getting user cursor ready
+	int cursX(0), cursY(1);
+	move(cursY, cursX);
+
+	// Main game loop
+	bool exit = false;
+	while (exit == false) {
+		// Getting user input
+		int userInput = getch();
+		switch (userInput) {
+			case KEY_UP:
+				{
+				if (cursY > 0) {
+					--cursY;
+					move(cursY, cursX);
+				}
+				}
+				break;
+			case KEY_DOWN:
+				{
+				int maxY, maxX;
+				getmaxyx(ourGUI.getMap(), maxY, maxX);
+				if (cursY < (maxY)) {
+					++cursY;
+					move(cursY, cursX);
+				}
+				}
+				break;
+			case KEY_LEFT:
+				{
+				if (cursX > 0) {
+					--cursX;
+					move(cursY, cursX);
+				}
+				}
+				break;
+			case KEY_RIGHT:
+				{
+				int maxY, maxX;
+				getmaxyx(ourGUI.getMap(), maxY, maxX);
+				if (cursX < (maxX - 1)) {
+					++cursX;
+					move(cursY, cursX);
+				}
+				}
+				break;
+				
+			case 'p':
+				drawOptPath(ourGUI.getMap(), dirs, cursX, cursY - 1);
+				break;
+			case 'o':
+				drawMap(ourGUI.getMap(), map);
+				break;
+
+			case 'q':
+				exit = true;
+				break;
+		}
+
+		// Refreshing the screen
+		wrefresh(ourGUI.getMap());
+		move(cursY, cursX);
+	}
 
 	endwin(); // Exit ncurses mode
 
