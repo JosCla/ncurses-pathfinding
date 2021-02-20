@@ -10,6 +10,8 @@ using std::floor; using std::round;
 using std::string;
 #include <utility>
 using std::pair;
+#include <sstream>
+using std::istringstream;
 
 // Libraries
 #include <ncurses.h>
@@ -25,7 +27,7 @@ void drawTitle(WINDOW *window) {
 	wclear(window);
 
 	// Printing the title section
-	mvwprintw(window, 0, 0, "ncurses-pathfinding | (c)ontrols (o)ptions");
+	mvwprintw(window, 0, 0, "ncurses-pathfinding | (c)ontrols (o)ptions (q)uit");
 	mvwchgat(window, 0, 0, -1, A_REVERSE, 0, NULL);
 
 	// Refreshing the window
@@ -151,6 +153,42 @@ char toGreyscale(double num, double min, double max) {
 	unsigned int pos = round(level * (greyscale.size() - 1));
 
 	return greyscale.at(pos);
+}
+
+// Draws the controls window
+void drawControls(WINDOW *window) {
+	int maxY, maxX;
+	getmaxyx(window, maxY, maxX);
+
+	string controls = "arrow keys: move cursor";
+	controls += "s: set start point (cost zero)\n";
+	controls += "p: mark optimal path from start to cursor\n";
+	controls += "d: delete all marked paths\n";
+	controls += "\n";
+	controls += "h: hide controls";
+
+	int y = 1;
+	int x = 1;
+	for (char c : controls) {
+		// Accounting for newlines
+		if (c == '\n') {
+			++y;
+			x = 1;
+			continue;
+		}
+
+		// Adding current character
+		mvwaddch(window, y, x, c);
+
+		// Moving cursor to next character
+		++x;
+		if (x > (maxX - 2)) {
+			++y;
+			x = 1;
+		}
+	}
+
+	wrefresh(window);
 }
 
 // Draws the status window

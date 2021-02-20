@@ -73,6 +73,10 @@ int main() {
 	int cursX(0), cursY(1);
 	move(cursY, cursX);
 
+	// Finding map window dimensions
+	int maxY, maxX;
+	getmaxyx(ourGUI.getMap(), maxY, maxX);
+
 	// Main game loop
 	bool exit = false;
 	while (exit == false) {
@@ -80,47 +84,40 @@ int main() {
 		int userInput = getch();
 		switch (userInput) {
 			case KEY_UP:
-				{
-				if (cursY > 0) {
+				if (cursY > 1) {
 					--cursY;
 					move(cursY, cursX);
 				}
-				}
 				break;
 			case KEY_DOWN:
-				{
-				int maxY, maxX;
-				getmaxyx(ourGUI.getMap(), maxY, maxX);
 				if (cursY < (maxY)) {
 					++cursY;
 					move(cursY, cursX);
 				}
-				}
 				break;
 			case KEY_LEFT:
-				{
 				if (cursX > 0) {
 					--cursX;
 					move(cursY, cursX);
 				}
-				}
 				break;
 			case KEY_RIGHT:
-				{
-				int maxY, maxX;
-				getmaxyx(ourGUI.getMap(), maxY, maxX);
 				if (cursX < (maxX - 1)) {
 					++cursX;
 					move(cursY, cursX);
-				}
 				}
 				break;
 				
 			case 'p':
 				drawOptPath(ourGUI.getMap(), dirs, cursX, cursY - 1);
 				break;
-			case 'o':
+			case 'd':
 				drawMap(ourGUI.getMap(), map);
+				break;
+
+			case 'c':
+				drawControls(ourGUI.getMenu());
+				move(cursY, cursX);
 				break;
 
 			case 'q':
