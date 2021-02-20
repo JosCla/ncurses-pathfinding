@@ -134,12 +134,12 @@ void drawMapDirs(WINDOW *window, const vector<vector<double>> &map,
 
 // Recursively highlights the optimal path from a tile to the origin point
 void drawOptPath(WINDOW *window, const vector<vector<int>> dirs,
-		const int x, const int y) {
+		const int x, const int y, const int endX, const int endY) {
 	mvwchgat(window, y, x, 1, A_REVERSE, 3, NULL);
 
-	if (x != 0 || y != 0) {
+	if (x != endX || y != endY) {
 		pair<int, int> dir = intToDir(dirs.at(y).at(x));
-		drawOptPath(window, dirs, x + dir.first, y + dir.second);
+		drawOptPath(window, dirs, x + dir.first, y + dir.second, endX, endY);
 	}
 }
 
@@ -160,12 +160,12 @@ void drawControls(WINDOW *window) {
 	int maxY, maxX;
 	getmaxyx(window, maxY, maxX);
 
-	string controls = "arrow keys: move cursor";
+	string controls = "arrow keys: move cursor\n";
 	controls += "s: set start point (cost zero)\n";
 	controls += "p: mark optimal path from start to cursor\n";
 	controls += "d: delete all marked paths\n";
 	controls += "\n";
-	controls += "h: hide controls";
+	//controls += "h: hide controls";
 
 	int y = 1;
 	int x = 1;

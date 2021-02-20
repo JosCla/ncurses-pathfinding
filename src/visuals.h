@@ -26,7 +26,7 @@ void drawMapDirs(WINDOW *window, const std::vector<std::vector<double>> &map,
 
 // Recursively highlights the optimal path from a tile to the origin point
 void drawOptPath(WINDOW *window, const std::vector<std::vector<int>> dirs,
-		const int x, const int y);
+		const int x, const int y, const int endX, const int endY);
 
 // Converts a number to greyscale given a minimum and maximum value
 char toGreyscale(double num, double min, double max);

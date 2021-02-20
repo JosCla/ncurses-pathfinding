@@ -22,8 +22,9 @@ public:
 
 	// Sets the map
 	void setMap(const std::vector<std::vector<double>> &map);
-	// Sets the starting coordinates
+	// Sets/gets the starting coordinates
 	void setStart(unsigned int startX, unsigned int startY);
+	std::pair<unsigned int, unsigned int> getStart();
 	// Sets the ending coordinates
 	void setEnd(unsigned int endX, unsigned int endY);
 	void setStopAtEnd(bool stop);

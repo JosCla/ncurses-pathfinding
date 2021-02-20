@@ -7,6 +7,8 @@ using std::vector;
 using std::rand; using std::srand;
 #include <ctime>
 using std::time;
+#include <utility>
+using std::pair;
 
 // Libraries
 #include <ncurses.h>
@@ -109,7 +111,11 @@ int main() {
 				break;
 				
 			case 'p':
-				drawOptPath(ourGUI.getMap(), dirs, cursX, cursY - 1);
+				{
+				pair<unsigned int, unsigned int> end = pathfinder.getStart();
+				drawOptPath(ourGUI.getMap(), dirs, cursX, cursY - 1,
+						end.first, end.second);
+				}
 				break;
 			case 'd':
 				drawMap(ourGUI.getMap(), map);
@@ -118,6 +124,14 @@ int main() {
 			case 'c':
 				drawControls(ourGUI.getMenu());
 				move(cursY, cursX);
+				break;
+
+			case 's':
+				pathfinder.setStart(cursX, cursY - 1);
+				pathfinder.pathfind();
+				costs = pathfinder.getCosts();
+				dirs = pathfinder.getDirs();
+				drawMap(ourGUI.getMap(), map);
 				break;
 
 			case 'q':

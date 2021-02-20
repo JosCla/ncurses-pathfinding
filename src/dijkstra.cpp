@@ -6,7 +6,7 @@
 using std::vector;
 #include <limits>
 #include <utility>
-using std::pair;
+using std::pair; using std::make_pair;
 #include <cmath>
 using std::fabs;
 
@@ -101,6 +101,9 @@ void Dijkstra::setMap(const vector<vector<double>> &map) {
 	// Defaulting start/end coordinates to (0,0) if invalid
 	setStart(_startX, _startY);
 	setEnd(_endX, _endY);
+}
+pair<unsigned int, unsigned int> Dijkstra::getStart() {
+	return make_pair(_startX, _startY);
 }
 
 void Dijkstra::setStart(unsigned int startX, unsigned int startY) {
