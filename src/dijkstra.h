@@ -17,6 +17,9 @@ public:
 	// Pathfinds throughout the entire map, finding the optimal cost
 	// of reaching every point
 	void pathfind();
+	// Performs a single step of pathfinding. Returns true if there was
+	// another tile to pathfind to, and false otherwise
+	bool step();
 	// Resets pathfinding data
 	void resetPath();
 
@@ -33,6 +36,12 @@ public:
 	const std::vector<std::vector<double>>& getCosts();
 	// Returns a const reference to the _dirs vector
 	const std::vector<std::vector<int>>& getDirs();
+
+	// Returns a const reference to the pathfinding queue
+	const std::set<std::pair<double, std::pair<unsigned int, unsigned int>>>&
+		getQueue();
+	// Returns a const reference to the visited points queue
+	const std::set<std::pair<unsigned int, unsigned int>>& getVisited();
 
 private:
 	// The cost map to be traversed
