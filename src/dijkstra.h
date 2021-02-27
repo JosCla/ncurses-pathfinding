@@ -27,21 +27,21 @@ public:
 	void setMap(const std::vector<std::vector<double>> &map);
 	// Sets/gets the starting coordinates
 	void setStart(unsigned int startX, unsigned int startY);
-	std::pair<unsigned int, unsigned int> getStart();
+	std::pair<unsigned int, unsigned int> getStart() const;
 	// Sets the ending coordinates
 	void setEnd(unsigned int endX, unsigned int endY);
 	void setStopAtEnd(bool stop);
 
 	// Returns a const reference to the _costs vector
-	const std::vector<std::vector<double>>& getCosts();
+	const std::vector<std::vector<double>>& getCosts() const;
 	// Returns a const reference to the _dirs vector
-	const std::vector<std::vector<int>>& getDirs();
+	const std::vector<std::vector<int>>& getDirs() const;
 
 	// Returns a const reference to the pathfinding queue
 	const std::set<std::pair<double, std::pair<unsigned int, unsigned int>>>&
-		getQueue();
+		getQueue() const;
 	// Returns a const reference to the visited points queue
-	const std::set<std::pair<unsigned int, unsigned int>>& getVisited();
+	const std::set<std::pair<unsigned int, unsigned int>>& getVisited() const;
 
 private:
 	// The cost map to be traversed

@@ -119,7 +119,7 @@ void Dijkstra::setMap(const vector<vector<double>> &map) {
 	setStart(_startX, _startY);
 	setEnd(_endX, _endY);
 }
-pair<unsigned int, unsigned int> Dijkstra::getStart() {
+pair<unsigned int, unsigned int> Dijkstra::getStart() const {
 	return make_pair(_startX, _startY);
 }
 
@@ -150,19 +150,19 @@ void Dijkstra::setStopAtEnd(bool stop) {
 	_stopAtEnd = stop;
 }
 
-const vector<vector<double>>& Dijkstra::getCosts() {
+const vector<vector<double>>& Dijkstra::getCosts() const {
 	return _costs;
 }
 
-const vector<vector<int>>& Dijkstra::getDirs() {
+const vector<vector<int>>& Dijkstra::getDirs() const {
 	return _dirs;
 }
 
 const set<pair<double, pair<unsigned int, unsigned int>>>& 
-	Dijkstra::getQueue() {
+	Dijkstra::getQueue() const {
 	return _queue;
 }
 
-const set<pair<unsigned int, unsigned int>>& Dijkstra::getVisited() {
+const set<pair<unsigned int, unsigned int>>& Dijkstra::getVisited() const {
 	return _visited;
 }
