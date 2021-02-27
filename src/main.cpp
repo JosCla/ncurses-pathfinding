@@ -27,6 +27,7 @@ int main() {
 	noecho(); // Disable echoing
 	keypad(stdscr, true); // Enable special inputs
 	//curs_set(0); // Hiding the cursor
+	nodelay(stdscr, true); // Enable asynchronous inputs
 	refresh(); // (refreshing to make sure child windows are drawn)
 	srand(time(nullptr)); // initializing randomization
 
@@ -50,7 +51,7 @@ int main() {
 	Perlin2D perlin(rand());
 
 	// Making our map
-	vector<vector<double>> map(160, vector<double>(160, 0));
+	vector<vector<double>> map(30, vector<double>(80, 0));
 	for (unsigned int row = 0; row < map.size(); ++row) {
 		for (unsigned int col = 0; col < map.at(0).size(); ++col) {
 			double noise = perlin.noise(row / 10.0, col / 10.0);
@@ -60,7 +61,7 @@ int main() {
 
 	// Making our Dijkstra Pathfinding object
 	Dijkstra pathfinder(map);
-	pathfinder.pathfind();
+	//pathfinder.pathfind();
 	auto costs = pathfinder.getCosts();
 	auto dirs = pathfinder.getDirs();
 
@@ -134,14 +135,26 @@ int main() {
 				drawMap(ourGUI.getMap(), map);
 				break;
 
+			case 't':
+				if (pathfinder.step()) {
+					drawDijkstra(ourGUI.getMap(), pathfinder);
+				} else {
+					drawMap(ourGUI.getMap(), map);
+				}
+				wrefresh(ourGUI.getMap());
+				break;
+
 			case 'q':
 				exit = true;
+				break;
+
+			case ERR:
 				break;
 		}
 
 		// Refreshing the screen
-		wrefresh(ourGUI.getMap());
 		move(cursY, cursX);
+		//wrefresh(ourGUI.getMap());
 	}
 
 	endwin(); // Exit ncurses mode
