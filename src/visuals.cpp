@@ -155,6 +155,32 @@ char toGreyscale(double num, double min, double max) {
 	return greyscale.at(pos);
 }
 
+// Draws a Dijkstra pathfinding object
+void drawDijkstra(WINDOW *window, const Dijkstra &dijkstra) {
+	// Highlighting all queue points in blue
+	auto pointQueue = dijkstra.getQueue();
+	for (auto point : pointQueue) {
+		mvwchgat(window, point.second.second, point.second.first, 1, 
+				A_BOLD | A_REVERSE, COL_BLUE, NULL);
+	}
+
+	// Coloring all visited squares blue
+	auto visited = dijkstra.getVisited();
+	for (auto point : visited) {
+		mvwchgat(window, point.second, point.first, 1, A_BOLD, COL_BLUE, NULL);
+	}
+
+	// Getting the next point in the queue, drawing opt path to start
+	if (!pointQueue.empty()) {
+		auto nextPoint = *(pointQueue.begin());
+		auto start = dijkstra.getStart();
+		drawOptPath(window, dijkstra.getDirs(), nextPoint.second.first,
+				nextPoint.second.second, start.first, start.second);
+		mvwchgat(window, nextPoint.second.second, nextPoint.second.first, 1,
+				A_BOLD | A_REVERSE, COL_YELLOW, NULL);
+	}
+}
+
 // Draws the controls window
 void drawControls(WINDOW *window) {
 	int maxY, maxX;

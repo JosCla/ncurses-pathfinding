@@ -9,6 +9,9 @@
 // Libraries
 #include <ncurses.h>
 
+// Our Files
+#include "dijkstra.h"
+
 // Draws the title window
 void drawTitle(WINDOW *window);
 
@@ -30,6 +33,9 @@ void drawOptPath(WINDOW *window, const std::vector<std::vector<int>> dirs,
 
 // Converts a number to greyscale given a minimum and maximum value
 char toGreyscale(double num, double min, double max);
+
+// Draws a Dijkstra pathfinding object
+void drawDijkstra(WINDOW *window, const Dijkstra &dijkstra);
 
 // Draws the controls window
 void drawControls(WINDOW *window);
